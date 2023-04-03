@@ -1,4 +1,4 @@
-# meta developer: @modwini
+# meta developer: @ctouserbot
 import json as JSON
 import logging
 from .. import loader, utils
