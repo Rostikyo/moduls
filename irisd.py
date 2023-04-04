@@ -172,61 +172,60 @@ class AutoIris(loader.Module):
         chatt = str(message.chat_id)[1:]
         await message.reply(chatt)
 
-    async def watche(self, message):
-        """Интересно, почему он именно watche называется... 🤔"""
+    async def watcher(self, message):
+        """Интересно, почему он именно watcher называется... 🤔"""
         gf = message.text
         id_chat = str(message.chat_id)[1:]
-        if id_chat == self.config["Id_chat"]:
+        di = self.config["Id_chat"]
+        if str(id_chat) == str(di):
             if "🕵️‍♂️" in gf:
-                exlist = self.db.get("NumMod", "exUsers")
-                err = "1"
-                json = JSON.loads(message.to_json())
-                try:
-                    for i in range(len(message.entities)):
-                        try:
-                            link = json["entities"][i]["url"]
-                            if link.startswith('tg'):
-                                users = '@' + link.split('=')[1]
-                                if users in exlist:
+                if "Организатор" in gf:
+                    exlist = self.db.get("NumMod", "exUsers")
+                    err = "1"
+                    json = JSON.loads(message.to_json())
+                    try:
+                        for i in range(len(message.entities)):
+                            try:
+                                link = json["entities"][i]["url"]
+                                if link.startswith('tg'):
+                                    users = '@' + link.split('=')[1]
+                                    if users in exlist:
+                                        await message.reply(
+                                            self.strings("ex").format(
+                                                users
+                                            )
+                                        )
+                                    else:
+                                        await message.reply(f'/заразить {users}')
+                                elif link.startswith('https://t.me'):
+                                    a = '@' + str(link.split("/")[3])
+                                    if a in exlist:
+                                        await message.reply(
+                                            self.strings("ex").format(
+                                                a
+                                            )
+                                        )
+                                    else:
+                                        await message.reply(f'/заразить {a}')
+                                else:
+                                    await message.reply(
+                                        self.strings("hueta")
+                                    )
+                            except Exception:
+                                blayt = message.raw_text[
+                                        json["entities"][i]["offset"]:json["entities"][i]["offset"] + json["entities"][i][
+                                            "length"]]
+                                if blayt in exlist:
                                     await message.reply(
                                         self.strings("ex").format(
-                                            users
+                                            blayt
                                         )
                                     )
                                 else:
-                                    await message.reply(f'/заразить {users}')
-                            elif link.startswith('https://t.me'):
-                                a = '@' + str(link.split("/")[3])
-                                if a in exlist:
-                                    await message.reply(
-                                        self.strings("ex").format(
-                                            a
-                                        )
-                                    )
-                                else:
-                                    await message.reply(f'/заразить {a}')
-                            else:
-                                await message.reply(
-                                    self.strings("hueta")
-                                )
-                        except Exception:
-                            blayt = message.raw_text[
-                                    json["entities"][i]["offset"]:json["entities"][i]["offset"] + json["entities"][i][
-                                        "length"]]
-                            if blayt in exlist:
-                                await message.reply(
-                                    self.strings("ex").format(
-                                        blayt
-                                    )
-                                )
-                            else:
-                                await message.reply(f"/заразить {blayt}")
-                        await asyncio.sleep(3.3)
+                                    await message.reply(f"/заразить {blayt}")
 
-                except TypeError:
-                    err = "2"
-                    await message.reply(
-                        self.strings("hueta")
-                    )
-                if err != "2":
-                    await message.delete()
+                    except TypeError:
+                        err = "2"
+                        await message.reply(
+                            self.strings("hueta")
+                        )
